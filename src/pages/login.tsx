@@ -23,6 +23,16 @@ export const LoginPage = () => {
     const [passwordInput, setPasswordInput] = useState<string>('');
     const [passwordError, setPasswordError] = useState<boolean>(false);
 
+    const [disabled, setDisabled] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (emailInput.includes('@') && !emailError && passwordInput.length >= 8 && !passwordError) {
+            setDisabled(false);
+        } else {
+            setDisabled(true);
+        }
+    }, [emailInput, passwordInput, emailError, passwordError]);
+
     useEffect(() => {
         const getUser = () => GET_USERS().then((users) => setUsers(users));
         getUser();
@@ -60,7 +70,8 @@ export const LoginPage = () => {
             if (user.email === emailInput && user.password === passwordInput) {
                 return navigate('/dashboard');
             } else {
-                return;
+                alert('email or password is not match!');
+                throw new Error('email or password is not match!');
             }
         });
     };
@@ -118,7 +129,13 @@ export const LoginPage = () => {
                             )}
                         </div>
                     </div>
-                    <button className="w-full bg-customBlue text-white font-medium py-2 mt-2 rounded-md" type="submit">
+                    <button
+                        disabled={disabled}
+                        className={`w-full  ${
+                            disabled ? 'bg-customGray' : 'bg-customBlue'
+                        } text-white font-medium py-2 mt-2 rounded-md`}
+                        type="submit"
+                    >
                         Log In
                     </button>
                 </form>

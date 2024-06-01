@@ -64,7 +64,10 @@ export const RegisterPage = () => {
 
         POST_USERS(data)
             .then(() => navigate('/login'))
-            .catch((err) => alert(err));
+            .catch((err) => {
+                alert(err);
+                throw new Error(err);
+            });
     };
 
     return (
