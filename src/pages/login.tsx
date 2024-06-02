@@ -23,6 +23,8 @@ export const LoginPage = () => {
     const [passwordInput, setPasswordInput] = useState<string>('');
     const [passwordError, setPasswordError] = useState<boolean>(false);
 
+    const [isUserFound, setIsUserFound] = useState<boolean>(false);
+
     const [disabled, setDisabled] = useState<boolean>(true);
 
     useEffect(() => {
@@ -66,15 +68,25 @@ export const LoginPage = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        users.map((user) => {
-            if (user.email === emailInput && user.password === passwordInput) {
-                return navigate('/dashboard');
-            } else {
-                alert('email or password is not match!');
-                throw new Error('email or password is not match!');
-            }
-        });
+        const user = users?.find((user) => user.email === emailInput && user.password === passwordInput);
+
+        if (user) {
+            localStorage.setItem(
+                'User',
+                JSON.stringify({
+                    email: user.email,
+                    role: user.role,
+                })
+            );
+            setIsUserFound(false);
+            return navigate('/dashboard');
+        } else {
+            setIsUserFound(true);
+            return;
+        }
     };
+
+    const handlePageChange = () => navigate('/register');
 
     return (
         // Container
@@ -112,7 +124,10 @@ export const LoginPage = () => {
                         </div>
                     </div>
                     <div className="flex flex-col gap-y-2">
-                        <label className="font-medium text-customGray ">PASSWORD</label>
+                        <div className="flex justify-between items-center w-full">
+                            <label className="font-medium text-customGray ">PASSWORD</label>
+                            <h1 className="font-medium text-sm text-customGray">Forgot password ?</h1>
+                        </div>
                         <div className="relative h-fit">
                             <input
                                 className="p-3 border-customGray border rounded-md w-full"
@@ -139,6 +154,15 @@ export const LoginPage = () => {
                         Log In
                     </button>
                 </form>
+
+                {isUserFound && <h1 className="text-red-500 text-sm">User not found</h1>}
+
+                <h1 className="text-customGray text-sm">
+                    Don't have an account?{' '}
+                    <span onClick={() => handlePageChange()} className="text-customBlue font-medium cursor-pointer">
+                        Sign Up
+                    </span>
+                </h1>
             </div>
         </div>
     );

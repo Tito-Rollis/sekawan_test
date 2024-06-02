@@ -15,6 +15,7 @@ export const RegisterPage = () => {
     const [passwordError, setPasswordError] = useState<boolean>(false);
 
     const checkBoxRef = useRef<HTMLInputElement | null>(null);
+    const [checkBoxInput, setCheckBoxInput] = useState<boolean | undefined>(false);
 
     const [disabled, setDisabled] = useState<boolean>(true);
 
@@ -25,6 +26,12 @@ export const RegisterPage = () => {
             setDisabled(true);
         }
     }, [emailInput, passwordInput, emailError, passwordError]);
+
+    const handleCheckboxInput = () => {
+        if (checkBoxRef) {
+            setCheckBoxInput(checkBoxRef.current?.checked);
+        }
+    };
 
     const handleEmailInput = () => {
         if (emailInputRef.current) {
@@ -59,7 +66,7 @@ export const RegisterPage = () => {
             email: emailInput,
             password: passwordInput,
             id: uuidv4(),
-            role: checkBoxRef ? 'admin' : 'guest',
+            role: checkBoxInput ? 'admin' : 'guest',
         };
 
         POST_USERS(data)
@@ -125,7 +132,13 @@ export const RegisterPage = () => {
                     </div>
                     <div className="flex items-center gap-x-2">
                         <label>As Admin</label>
-                        <input ref={checkBoxRef} type="checkbox" name="role" value="admin" />
+                        <input
+                            onChange={() => handleCheckboxInput()}
+                            ref={checkBoxRef}
+                            type="checkbox"
+                            name="role"
+                            value="admin"
+                        />
                     </div>
                     <button
                         disabled={disabled}
